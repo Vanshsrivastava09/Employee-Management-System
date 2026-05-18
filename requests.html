@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EMS HR Requests</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-mini"><div class="mark"></div><div><div class="brand-text">EMS HR</div><div class="brand-sub">Admin Panel</div></div></div>
+      <nav class="nav">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="employees.html">Employees</a>
+        <a href="departments.html">Departments</a>
+        <a href="salaries.html">Salaries</a>
+        <a href="notices.html">Issue Notices</a>
+        <a href="leaves.html">Leaves</a>
+        <a href="attendances.html">Attendances</a>
+        <a class="active" href="requests.html">Requests</a>
+      </nav>
+      <div class="sidebar-footer"><div class="profile-section"><div class="profile-avatar"></div><div><div class="profile-name">HR Admin</div><div class="profile-sub">Session active</div></div></div><button id="logoutBtn" class="btn btn--ghost" type="button">Logout</button></div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button id="mobileMenuBtn" class="icon-btn mobile-menu" type="button">M</button>
+          <div class="header-title"><h2>Requests</h2><p>Handle employee requests and approval workflows.</p></div>
+        </div>
+        <button id="createRequestBtn" class="btn btn--primary" type="button">Create Request</button>
+      </div>
+
+      <section class="table-wrap">
+        <div class="table-tools"><div class="left"><select id="requestEmployeeFilter"><option value="">All employees</option></select></div><div class="right"><span class="pill">Requests</span></div></div>
+        <div class="table-scroll"><table><thead><tr><th>Employee</th><th>Title</th><th>Status</th><th style="text-align:right;">Actions</th></tr></thead><tbody id="requestsTableBody"><tr><td colspan="4">Loading...</td></tr></tbody></table></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="requestModal" class="modal-backdrop hidden"><div class="modal"><header><h3 id="modalTitle">Create Request</h3><button id="closeRequestModal" class="btn btn--ghost">Close</button></header><div class="content"><form id="requestForm" class="form-grid"><input id="requestId" type="hidden"><div><label>Employee</label><select id="requestEmployeeId"></select></div><div class="span-2"><label>Title</label><input id="requestTitle"></div><div class="span-2"><label>Description</label><textarea id="requestDescription"></textarea></div></form></div><footer><button id="saveRequestBtn" class="btn btn--primary">Save</button></footer></div></div>
+
+  <script src="app.js"></script>
+  <script src="auth.js"></script>
+  <script src="api.js"></script>
+  <script src="requests.js"></script>
+  <script>
+    (async function () { const ok = await Auth.requireAuth(); if (!ok) return; document.getElementById('logoutBtn').addEventListener('click', async ()=>{ await Auth.logout(); window.location.href='index.html'; }); await RequestsUI.init(); })();
+  </script>
+</body>
+</html>

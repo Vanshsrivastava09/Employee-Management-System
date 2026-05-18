@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EMS HR Employees</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-mini"><div class="mark"></div><div><div class="brand-text">EMS HR</div><div class="brand-sub">Admin Panel</div></div></div>
+      <nav class="nav">
+        <a href="dashboard.html"><span class="nav-icon">D</span><span>Dashboard</span></a>
+        <a class="active" href="employees.html"><span class="nav-icon">E</span><span>Employees</span></a>
+        <a href="departments.html"><span class="nav-icon">P</span><span>Departments</span></a>
+        <a href="salaries.html"><span class="nav-icon">S</span><span>Salaries</span></a>
+        <a href="notices.html"><span class="nav-icon">N</span><span>Issue Notices</span></a>
+        <a href="leaves.html"><span class="nav-icon">L</span><span>Leaves</span></a>
+        <a href="attendances.html"><span class="nav-icon">A</span><span>Attendances</span></a>
+        <a href="requests.html"><span class="nav-icon">R</span><span>Requests</span></a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="profile-section"><div class="profile-avatar"></div><div><div class="profile-name">HR Admin</div><div class="profile-sub">Session active</div></div></div>
+        <button id="logoutBtn" class="btn btn--ghost" type="button">Logout</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button id="mobileMenuBtn" class="icon-btn mobile-menu" type="button">M</button>
+          <div class="header-title"><h2>Employees</h2><p>Manage employee records with search, filters, pagination and CRUD actions.</p></div>
+        </div>
+        <button id="createEmployeeBtn" class="btn btn--primary" type="button">Add Employee</button>
+      </div>
+
+      <section class="grid-cards" style="grid-template-columns:repeat(3,minmax(0,1fr));">
+        <div class="stat-card"><div><h3>Total Shown</h3><div class="value" id="cardEmployeesShown">0</div></div><div class="stat-icon">T</div></div>
+        <div class="stat-card"><div><h3>Active</h3><div class="value" id="cardEmployeesActive">0</div></div><div class="stat-icon">A</div></div>
+        <div class="stat-card"><div><h3>Departments</h3><div class="value" id="cardEmployeesDepartments">0</div></div><div class="stat-icon">D</div></div>
+      </section>
+
+      <section class="table-wrap">
+        <div class="table-tools">
+          <div class="left">
+            <input id="searchInput" type="text" placeholder="Search by full name, email or phone">
+            <select id="departmentFilter"></select>
+            <button id="applyFiltersBtn" class="btn btn--soft" type="button">Apply</button>
+          </div>
+          <div class="right"><span class="pill">Employee master data</span></div>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Full Name</th><th>Email</th><th>Department</th><th>Contact Number</th><th>Status</th><th style="text-align:right;">Modify Employee</th></tr></thead>
+            <tbody id="employeesTableBody"><tr><td colspan="6">Loading...</td></tr></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="pagination"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="employeeModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="modal">
+      <header><h3 id="modalTitle">Add Employee</h3><button id="closeModalBtn" class="btn btn--ghost" type="button">Close</button></header>
+      <div class="content">
+        <form id="employeeForm" class="form-grid" novalidate>
+          <input id="employeeModalMode" type="hidden" value="create"><input id="empId" type="hidden">
+          <div><label for="fullName">Full Name</label><input id="fullName" required placeholder="e.g. Priya Sharma"></div>
+          <div><label for="email">Email</label><input id="email" type="email" required placeholder="priya@example.com"></div>
+          <div><label for="phone">Contact Number</label><input id="phone" required placeholder="9876543210"></div>
+          <div><label for="departmentId">Department</label><select id="departmentId" required></select></div>
+          <div class="span-2"><label style="display:flex;gap:10px;align-items:center;"><input id="isActive" type="checkbox" style="width:auto;min-height:auto;"> Active Employee</label></div>
+          <div class="span-2"><label for="photoFile">Profile Photo Preview</label><input id="photoFile" type="file" accept="image/*"><img id="photoUrlPreview" class="avatar" alt="preview" style="display:none;margin-top:10px;width:72px;height:72px;"></div>
+        </form>
+      </div>
+      <footer><button id="deletePhotoBtn" class="btn btn--ghost" type="button">Clear Photo</button><button id="saveEmployeeBtn" class="btn btn--primary" type="submit">Save Employee</button></footer>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="auth.js"></script>
+  <script src="api.js"></script>
+  <script src="employees.js"></script>
+  <script>
+    (async function () {
+      const ok = await Auth.requireAuth();
+      if (!ok) return;
+      document.getElementById("logoutBtn").addEventListener("click", async () => { await Auth.logout(); window.location.href = "index.html"; });
+      document.getElementById("deletePhotoBtn").addEventListener("click", function () {
+        const img = document.getElementById("photoUrlPreview"); img.src = ""; img.style.display = "none"; document.getElementById("photoFile").value = "";
+      });
+      await EmployeesUI.initEmployeePage();
+    })();
+  </script>
+</body>
+</html>
