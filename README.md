@@ -1,6 +1,10 @@
 # Employee Management System (EMS HR)
 
-A modern Employee Management System developed using Java Spring Boot, HTML, CSS, JavaScript, and MySQL. The project is designed to simulate a real-world HRMS dashboard with employee management, departments, attendance, leaves, salary modules, and admin functionalities.
+A modern Employee Management System (HRMS) developed using Java Spring Boot, HTML, CSS, JavaScript, and MySQL. The project simulates a real-world HR dashboard with modules for employee management, departments, attendance, leaves, salary management, and admin operations.
+
+## Live Demo
+
+🔗 Live Project: https://employee-management-system-09.vercel.app/
 
 ## Features
 
@@ -8,12 +12,12 @@ A modern Employee Management System developed using Java Spring Boot, HTML, CSS,
 * Department Management
 * Attendance Tracking
 * Leave Management
-* Salary Module
+* Salary Management
 * HR Dashboard Analytics
 * Responsive Admin Panel
 * CRUD Operations
-* REST API Integration
-* Modern HRMS UI
+* REST API Architecture
+* Modern HRMS User Interface
 
 ## Tech Stack
 
@@ -36,44 +40,45 @@ A modern Employee Management System developed using Java Spring Boot, HTML, CSS,
 
 ## Modules
 
-### HR Admin Dashboard
+### Dashboard
 
-* Employee analytics
-* Department statistics
-* Requests overview
+* Employee statistics
+* Department overview
 * Attendance insights
+* Request tracking
+* Analytics cards
 
 ### Employees
 
-* Add employee
-* Edit employee
-* Delete employee
-* Search/filter employees
+* Add employees
+* Edit employee records
+* Delete employees
+* Employee search & filters
 
 ### Departments
 
-* Create departments
-* Assign employees
 * Department management
+* Employee assignment
+* Department analytics
 
 ### Attendance
 
-* Track attendance
-* Attendance records
+* Attendance tracking
+* Attendance records management
 
 ### Leaves
 
-* Apply leaves
-* Approve/reject leave requests
+* Leave request system
+* Leave approval workflow
 
 ### Salary Management
 
-* Employee salary records
+* Salary records
 * Payroll overview
 
 ## Project Structure
 
-```bash
+```bash id="4f7m9d"
 backend/
 frontend/
 database/
@@ -84,13 +89,13 @@ README.md
 
 ### Clone Repository
 
-```bash
+```bash id="8t5h1m"
 git clone YOUR_GITHUB_REPOSITORY_LINK
 ```
 
 ### Backend Setup
 
-```bash
+```bash id="p8d3n2"
 cd backend
 ./gradlew build
 ./gradlew bootRun
@@ -98,48 +103,54 @@ cd backend
 
 ### Frontend Setup
 
-```bash
+```bash id="c6w1r4"
 cd frontend
 python -m http.server 5500
 ```
 
-Open:
+Open in browser:
 
-```bash
+```bash id="d4m2x7"
 http://localhost:5500
 ```
 
 ## Deployment
 
-### Frontend
+### Frontend Deployment
 
-Deployed using Vercel.
+* Deployed on Vercel
 
 ### Backend
 
-Spring Boot backend with REST API architecture.
+* Spring Boot backend architecture with REST APIs
 
 ## Screenshots
 
-Add project screenshots here.
+Add screenshots of:
 
-## Future Improvements
+* Dashboard
+* Employees Page
+* Departments Page
+* Login Page
+
+## Future Enhancements
 
 * JWT Authentication
-* Role-based Access
+* Role-Based Access Control
 * Email Notifications
-* Cloud Database Deployment
-* Advanced Analytics
+* Cloud Database Integration
+* Advanced Analytics Dashboard
 
 ## Skills Learned
 
-* Full Stack Development
+* Full Stack Web Development
 * REST API Integration
 * Spring Boot Backend Development
 * Database Management
 * Frontend UI Development
 * CRUD Operations
 * Git & GitHub Workflow
+* Deployment using Vercel
 
 ## Author
 
