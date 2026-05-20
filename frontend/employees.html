@@ -27,12 +27,15 @@
     </aside>
 
     <main class="main">
-      <div class="topbar">
+        <div class="topbar">
         <div style="display:flex;align-items:center;gap:12px;">
           <button id="mobileMenuBtn" class="icon-btn mobile-menu" type="button">M</button>
           <div class="header-title"><h2>Employees</h2><p>Manage employee records with search, filters, pagination and CRUD actions.</p></div>
         </div>
-        <button id="createEmployeeBtn" class="btn btn--primary" type="button">Add Employee</button>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <button id="exportCsvBtn" class="btn btn--soft" type="button">Export CSV</button>
+          <button id="createEmployeeBtn" class="btn btn--primary" type="button">Add Employee</button>
+        </div>
       </div>
 
       <section class="grid-cards" style="grid-template-columns:repeat(3,minmax(0,1fr));">

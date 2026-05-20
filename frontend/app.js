@@ -58,6 +58,17 @@
     });
   }
 
+  function mediaUrl(url) {
+    if (!url) return "";
+    if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("blob:")) {
+      return url;
+    }
+    if (url.startsWith("/")) {
+      return API_BASE + url;
+    }
+    return url;
+  }
+
   function initLayout() {
     const menuBtn = document.getElementById("mobileMenuBtn");
     if (menuBtn) {
@@ -66,8 +77,9 @@
 
     // mark active link based on current path
     const path = window.location.pathname.split('/').pop() || 'dashboard.html';
+    const activePath = path === "profile.html" ? "employees.html" : path;
     document.querySelectorAll('.sidebar .nav a').forEach((link) => {
-      try { if (link.getAttribute('href') === path) link.classList.add('active'); else link.classList.remove('active'); } catch(e){}
+      try { if (link.getAttribute('href') === activePath) link.classList.add('active'); else link.classList.remove('active'); } catch(e){}
       link.addEventListener("click", () => document.body.classList.remove("sidebar-open"));
     });
   }
@@ -86,6 +98,7 @@
     setLoaderVisible,
     showToast,
     confirmDialog,
+    mediaUrl,
     initLayout,
     getSessionLoggedIn
   };

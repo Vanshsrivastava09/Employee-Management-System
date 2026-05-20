@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Employee Profile</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-mini"><div class="mark"></div><div><div class="brand-text">EMS HR</div><div class="brand-sub">Admin Panel</div></div></div>
+      <nav class="nav">
+        <a href="dashboard.html"><span class="nav-icon">D</span><span>Dashboard</span></a>
+        <a href="employees.html" class="active"><span class="nav-icon">E</span><span>Employees</span></a>
+        <a href="departments.html"><span class="nav-icon">P</span><span>Departments</span></a>
+        <a href="salaries.html"><span class="nav-icon">S</span><span>Salaries</span></a>
+        <a href="notices.html"><span class="nav-icon">N</span><span>Issue Notices</span></a>
+        <a href="leaves.html"><span class="nav-icon">L</span><span>Leaves</span></a>
+        <a href="attendances.html"><span class="nav-icon">A</span><span>Attendances</span></a>
+        <a href="requests.html"><span class="nav-icon">R</span><span>Requests</span></a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="profile-section"><div class="profile-avatar"></div><div><div class="profile-name">HR Admin</div><div class="profile-sub">Session active</div></div></div>
+        <button id="logoutBtn" class="btn btn--ghost" type="button">Logout</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button id="mobileMenuBtn" class="icon-btn mobile-menu" type="button">M</button>
+          <div class="header-title">
+            <h2>Employee Profile</h2>
+            <p>Full details, status, department and profile photo.</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <button id="backBtn" class="btn btn--ghost" type="button">&larr; Back</button>
+        </div>
+      </div>
+
+      <section class="section-grid" style="grid-template-columns: 1.1fr 0.9fr;">
+        <div class="card">
+          <h3 class="section-title">Employee information</h3>
+          <div class="profile-header" style="display:flex;gap:16px;align-items:center;">
+            <img id="profilePhoto" class="avatar" style="width:92px;height:92px;border-radius:16px;" alt="profile photo" />
+            <div>
+              <div class="employee-name" style="font-size:18px;font-weight:900;" id="profileName">-</div>
+              <div class="employee-email" id="profileEmail">-</div>
+              <div style="margin-top:6px;">
+                <span id="statusPill" class="pill pill--inactive">-</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:18px;" class="kv-grid">
+            <div class="kv"><div class="kv-k">Employee ID</div><div class="kv-v" id="profileId">-</div></div>
+            <div class="kv"><div class="kv-k">Department</div><div class="kv-v" id="profileDepartment">-</div></div>
+            <div class="kv"><div class="kv-k">Contact Number</div><div class="kv-v" id="profilePhone">-</div></div>
+            <div class="kv"><div class="kv-k">Created At</div><div class="kv-v" id="profileCreatedAt">-</div></div>
+            <div class="kv"><div class="kv-k">Updated At</div><div class="kv-v" id="profileUpdatedAt">-</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="section-title">Actions</h3>
+          <p style="margin:0;color:var(--muted);line-height:1.5;">
+            Use the Employees page to edit or delete this record.
+          </p>
+
+          <div style="margin-top:16px;display:grid;gap:10px;">
+            <button id="editBtn" class="btn btn--primary" type="button">Edit in Employees</button>
+          </div>
+
+          <div style="margin-top:22px;">
+            <h4 style="margin:0 0 10px;">Profile photo</h4>
+            <div style="color:var(--muted);font-size:13px;line-height:1.5;">
+              If photo is uploaded, it is served from the backend upload directory and displayed here.
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="auth.js"></script>
+  <script src="api.js"></script>
+
+  <script>
+    (async function () {
+      const ok = await Auth.requireAuth();
+      if (!ok) return;
+
+      const logoutBtn = document.getElementById("logoutBtn");
+      logoutBtn && logoutBtn.addEventListener("click", async () => {
+        await Auth.logout();
+        window.location.href = "index.html";
+      });
+
+      document.getElementById("backBtn").addEventListener("click", () => {
+        window.location.href = "employees.html";
+      });
+
+      document.getElementById("editBtn").addEventListener("click", () => {
+        const id = new URLSearchParams(window.location.search).get("id");
+        window.location.href = "employees.html";
+        // Note: edit modal is not auto-opened; kept simple for fresher portfolio clarity.
+      });
+
+      try {
+        App.setLoaderVisible(true);
+
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+        if (!id) throw new Error("Employee id is missing");
+
+        const res = await Api.get("/api/employees/" + id);
+        if (!res || res.success === false) throw new Error(res && res.message ? res.message : "Failed to load employee");
+
+        const emp = res.data || {};
+        document.getElementById("profileId").textContent = emp.id ?? "-";
+        document.getElementById("profileName").textContent = emp.fullName ?? "-";
+        document.getElementById("profileEmail").textContent = emp.email ?? "-";
+        document.getElementById("profilePhone").textContent = emp.phone ?? "-";
+        document.getElementById("profileDepartment").textContent = emp.departmentName ?? "-";
+
+        const created = emp.createdAt ? new Date(emp.createdAt).toLocaleString() : "-";
+        const updated = emp.updatedAt ? new Date(emp.updatedAt).toLocaleString() : "-";
+        document.getElementById("profileCreatedAt").textContent = created;
+        document.getElementById("profileUpdatedAt").textContent = updated;
+
+        const statusPill = document.getElementById("statusPill");
+        const isActive = !!emp.active;
+        statusPill.textContent = isActive ? "Active" : "Inactive";
+        statusPill.className = "pill " + (isActive ? "pill--active" : "pill--inactive");
+
+        const photoImg = document.getElementById("profilePhoto");
+        if (emp.photoUrl) {
+          photoImg.src = App.mediaUrl(emp.photoUrl);
+          photoImg.style.display = "block";
+        } else {
+          photoImg.style.display = "none";
+        }
+      } catch (e) {
+        App.showToast(e.message || "Failed to load profile", "error");
+      } finally {
+        App.setLoaderVisible(false);
+      }
+    })();
+  </script>
+</body>
+</html>
