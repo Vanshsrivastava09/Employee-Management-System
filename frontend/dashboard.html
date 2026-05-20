@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EMS HR Dashboard</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-mini">
+        <div class="mark"></div>
+        <div><div class="brand-text">EMS HR</div><div class="brand-sub">Admin Panel</div></div>
+      </div>
+      <nav class="nav">
+        <a class="active" href="dashboard.html"><span class="nav-icon">D</span><span>Dashboard</span></a>
+        <a href="employees.html"><span class="nav-icon">E</span><span>Employees</span></a>
+        <a href="departments.html"><span class="nav-icon">P</span><span>Departments</span></a>
+        <a href="salaries.html"><span class="nav-icon">S</span><span>Salaries</span></a>
+        <a href="notices.html"><span class="nav-icon">N</span><span>Issue Notices</span></a>
+        <a href="leaves.html"><span class="nav-icon">L</span><span>Leaves</span></a>
+        <a href="attendances.html"><span class="nav-icon">A</span><span>Attendances</span></a>
+        <a href="requests.html"><span class="nav-icon">R</span><span>Requests</span></a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="profile-section">
+          <div class="profile-avatar"></div>
+          <div><div class="profile-name">HR Admin</div><div class="profile-sub">Session active</div></div>
+        </div>
+        <button id="logoutBtn" class="btn btn--ghost" type="button">Logout</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button id="mobileMenuBtn" class="icon-btn mobile-menu" type="button">M</button>
+          <div class="header-title">
+            <h2>Dashboard</h2>
+            <p>College HRMS overview with employee, department, leave, request, attendance and notice widgets.</p>
+          </div>
+        </div>
+        <div class="topbar-actions"><span class="pill" id="lastUpdatedPill">Last updated: -</span></div>
+      </div>
+
+      <section class="grid-cards">
+        <div class="stat-card"><div><h3>Total Employees</h3><div class="value" id="cardTotalEmployees">0</div></div><div class="stat-icon">E</div></div>
+        <div class="stat-card"><div><h3>Departments</h3><div class="value" id="cardDepartments">0</div></div><div class="stat-icon">D</div></div>
+        <div class="stat-card"><div><h3>Leaves</h3><div class="value">22</div></div><div class="stat-icon">L</div></div>
+        <div class="stat-card"><div><h3>Requests</h3><div class="value">32</div></div><div class="stat-icon">R</div></div>
+        <div class="stat-card"><div><h3>Attendance</h3><div class="value" id="cardAttendance">0%</div></div><div class="stat-icon">A</div></div>
+        <div class="stat-card"><div><h3>Notices</h3><div class="value">6</div></div><div class="stat-icon">N</div></div>
+        <div class="stat-card"><div><h3>Active Staff</h3><div class="value" id="cardActiveEmployees">0</div></div><div class="stat-icon">HR</div></div>
+        <div class="stat-card"><div><h3>New Joinees</h3><div class="value" id="cardNewJoinees">0</div></div><div class="stat-icon">+</div></div>
+      </section>
+
+      <section class="section-grid">
+        <div class="card">
+          <h3 class="section-title">Employees by Department</h3>
+          <div id="departmentChart" class="chart-bars"></div>
+        </div>
+        <div class="card">
+          <h3 class="section-title">Recent Notices</h3>
+          <table>
+            <thead><tr><th>Notice</th><th>Audience</th></tr></thead>
+            <tbody>
+              <tr><td>Frontend Deadline</td><td>Department</td></tr>
+              <tr><td>Backend Review</td><td>Department</td></tr>
+              <tr><td>Full Stack Demo</td><td>All Staff</td></tr>
+              <tr><td>Deployment Update</td><td>HR Team</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section-grid">
+        <div class="card">
+          <h3 class="section-title">Recent Activity</h3>
+          <div id="recentActivity" class="activity-list"></div>
+        </div>
+        <div class="card">
+          <h3 class="section-title">Departments Overview</h3>
+          <div id="departmentsSummary" class="activity-list"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    (async function () {
+      const ok = await Auth.requireAuth();
+      if (!ok) return;
+      document.getElementById("logoutBtn").addEventListener("click", async () => {
+        await Auth.logout();
+        window.location.href = "index.html";
+      });
+
+      try {
+        App.setLoaderVisible(true);
+        const departmentsJson = await fetch(App.API_BASE + "/api/departments", { credentials:"include" }).then(r => r.json());
+        const employeesJson = await fetch(App.API_BASE + "/api/employees?size=1000&page=0", { credentials:"include" }).then(r => r.json());
+        const departments = departmentsJson.data || [];
+        const employees = employeesJson.data && employeesJson.data.items ? employeesJson.data.items : [];
+
+        const active = employees.filter(e => e.active).length;
+        document.getElementById("cardTotalEmployees").textContent = employees.length;
+        document.getElementById("cardDepartments").textContent = departments.length;
+        document.getElementById("cardActiveEmployees").textContent = active;
+        document.getElementById("cardAttendance").textContent = employees.length ? Math.round((active / employees.length) * 100) + "%" : "0%";
+        document.getElementById("cardNewJoinees").textContent = Math.min(5, employees.length);
+
+        const counts = new Map(departments.map(d => [d.id, 0]));
+        employees.forEach(e => counts.set(e.departmentId, (counts.get(e.departmentId) || 0) + 1));
+        const max = Math.max(1, ...Array.from(counts.values()));
+
+        document.getElementById("departmentChart").innerHTML = departments.map(d => {
+          const value = counts.get(d.id) || 0;
+          return `<div class="chart-row">
+            <strong>${App.escapeHtml(d.name)}</strong>
+            <div class="bar-track"><div class="bar-fill" style="--bar-width:${Math.max(8, (value / max) * 100)}%"></div></div>
+            <span>${value}</span>
+          </div>`;
+        }).join("");
+
+        document.getElementById("recentActivity").innerHTML = employees.slice(0, 5).map(e => `
+          <div class="activity-item">
+            <div><div class="activity-main">${App.escapeHtml(e.fullName)}</div><div class="activity-sub">${App.escapeHtml(e.departmentName || "Not specified")}</div></div>
+            <span class="pill ${e.active ? "pill--active" : "pill--inactive"}">${e.active ? "Active" : "Inactive"}</span>
+          </div>
+        `).join("") || "<div class='activity-item'>No employee activity yet.</div>";
+
+        document.getElementById("departmentsSummary").innerHTML = departments.map(d => `
+          <div class="activity-item">
+            <div><div class="activity-main">${App.escapeHtml(d.name)}</div><div class="activity-sub">Employees assigned</div></div>
+            <strong>${counts.get(d.id) || 0}</strong>
+          </div>
+        `).join("");
+
+        document.getElementById("lastUpdatedPill").textContent = "Last updated: " + new Date().toLocaleString();
+      } catch (e) {
+        App.showToast(e.message || "Failed to load dashboard", "error");
+      } finally {
+        App.setLoaderVisible(false);
+      }
+    })();
+  </script>
+</body>
+</html>

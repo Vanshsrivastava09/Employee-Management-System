@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EMS HR Salaries</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-mini"><div class="mark"></div><div><div class="brand-text">EMS HR</div><div class="brand-sub">Admin Panel</div></div></div>
+      <nav class="nav">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="employees.html">Employees</a>
+        <a href="departments.html">Departments</a>
+        <a class="active" href="salaries.html">Salaries</a>
+        <a href="notices.html">Issue Notices</a>
+        <a href="leaves.html">Leaves</a>
+        <a href="attendances.html">Attendances</a>
+        <a href="requests.html">Requests</a>
+      </nav>
+      <div class="sidebar-footer"><div class="profile-section"><div class="profile-avatar"></div><div><div class="profile-name">HR Admin</div><div class="profile-sub">Session active</div></div></div><button id="logoutBtn" class="btn btn--ghost" type="button">Logout</button></div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button id="mobileMenuBtn" class="icon-btn mobile-menu" type="button">M</button>
+          <div class="header-title"><h2>Salaries</h2><p>Manage payroll records, status and employee salary details.</p></div>
+        </div>
+        <button id="createSalaryBtn" class="btn btn--primary" type="button">Add Salary</button>
+      </div>
+
+      <section class="table-wrap">
+        <div class="table-tools"><div class="left"><select id="employeeFilter"><option value="">All employees</option></select></div><div class="right"><span class="pill">Payroll</span></div></div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Employee</th><th>Amount</th><th>Period</th><th>Status</th><th style="text-align:right;">Actions</th></tr></thead>
+            <tbody id="salariesTableBody"><tr><td colspan="5">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="salaryModal" class="modal-backdrop hidden"><div class="modal"><header><h3 id="modalTitle">Add Salary</h3><button id="closeSalaryModal" class="btn btn--ghost">Close</button></header><div class="content"><form id="salaryForm" class="form-grid"><input id="salaryId" type="hidden"><div><label>Employee</label><select id="salaryEmployeeId" required></select></div><div><label>Amount</label><input id="salaryAmount" required></div><div><label>Period</label><input id="salaryPeriod" placeholder="YYYY-MM" required></div><div class="span-2"><label>Status</label><select id="salaryStatus"><option>PENDING</option><option>PAID</option></select></div></form></div><footer><button id="saveSalaryBtn" class="btn btn--primary">Save</button></footer></div></div>
+
+  <script src="app.js"></script>
+  <script src="auth.js"></script>
+  <script src="api.js"></script>
+  <script src="salaries.js"></script>
+  <script>
+    (async function () { const ok = await Auth.requireAuth(); if (!ok) return; document.getElementById('logoutBtn').addEventListener('click', async ()=>{ await Auth.logout(); window.location.href='index.html'; }); await SalariesUI.init(); })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EMS - HR Sign Up</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <main class="auth-page">
+    <section class="auth-card">
+      <div class="auth-layout">
+        <div class="auth-visual">
+          <div>
+            <div class="auth-graphic"></div>
+            <p class="welcome-copy">Create an HR profile for your organization</p>
+          </div>
+        </div>
+        <div class="auth-panel">
+          <h1>EMS HR Sign Up</h1>
+          <p>This portfolio version shows polished validation UI. Admin login is seeded by the backend.</p>
+
+          <form id="signupForm" class="form" novalidate>
+            <div class="auth-grid">
+              <div><label>First Name</label><input required placeholder="First name"></div>
+              <div><label>Contact Number</label><input required placeholder="9876543210"></div>
+              <div><label>Last Name</label><input required placeholder="Last name"></div>
+              <div><label>Organization Name</label><input required placeholder="ABC College"></div>
+              <div><label>Email</label><input type="email" required placeholder="hr@example.com"></div>
+              <div><label>Organization URL</label><input placeholder="https://example.com"></div>
+              <div><label>Password</label><input type="password" required minlength="6"></div>
+              <div><label>Confirm Password</label><input type="password" required minlength="6"></div>
+            </div>
+
+            <div id="signupMessage" class="field-error"></div>
+            <button class="btn btn--primary" type="submit">Sign Up</button>
+            <div class="auth-switch">
+              <span>Already have an account?</span>
+              <a href="index.html" style="color:var(--primary);font-weight:900;">Sign in</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+  <script>
+    document.getElementById("signupForm").addEventListener("submit", function (event) {
+      event.preventDefault();
+      App.showToast("Signup UI is ready. Use seeded admin login for this demo project.", "success");
+      document.getElementById("signupMessage").textContent = "";
+    });
+  </script>
+</body>
+</html>

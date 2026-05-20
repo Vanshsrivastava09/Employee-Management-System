@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EMS - HR Login</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <main class="auth-page">
+    <section class="auth-card">
+      <div class="auth-layout">
+        <div class="auth-visual">
+          <div class="landing-welcome">
+            <div class="auth-graphic"></div>
+            <h2>Welcome</h2>
+            <p class="welcome-copy">Welcome to Employee Management System, please select your role to proceed further.</p>
+            <div class="role-actions">
+              <a class="btn btn--soft" href="employee-login.html">Employee</a>
+              <a class="btn btn--primary" href="index.html">HR Admin</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-panel">
+          <h1>Sign in to your account</h1>
+          <p>Use HR admin credentials to manage employees, departments, requests, and notices.</p>
+
+          <form id="loginForm" class="form" novalidate>
+            <div>
+              <label for="username">Username</label>
+              <input id="username" name="username" type="text" autocomplete="username" placeholder="admin" required />
+              <span class="field-error" id="usernameError"></span>
+            </div>
+
+            <div>
+              <label for="password">Password</label>
+              <input id="password" name="password" type="password" autocomplete="current-password" placeholder="admin123" required />
+              <span class="field-error" id="passwordError"></span>
+            </div>
+
+            <div id="loginError" class="field-error"></div>
+
+            <button class="btn btn--primary" type="submit" id="loginBtn">
+              <span class="btn-text">Sign in</span>
+              <span class="spinner hidden" aria-hidden="true"></span>
+            </button>
+
+            <div class="auth-switch">
+              <span>Demo admin: <strong>admin</strong> / <strong>admin123</strong></span>
+              <a href="signup.html" style="color:var(--primary);font-weight:900;">Create HR account</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+      const button = document.getElementById("loginBtn");
+      const spinner = button.querySelector(".spinner");
+      const buttonText = button.querySelector(".btn-text");
+      const errorBox = document.getElementById("loginError");
+
+      document.getElementById("usernameError").textContent = username ? "" : "Username is required.";
+      document.getElementById("passwordError").textContent = password ? "" : "Password is required.";
+      errorBox.textContent = "";
+      if (!username || !password) return;
+
+      try {
+        button.disabled = true;
+        spinner.classList.remove("hidden");
+        buttonText.textContent = "Signing in...";
+        await Auth.login(username, password);
+        window.location.href = "dashboard.html";
+      } catch (error) {
+        errorBox.textContent = error.message || "Login failed.";
+      } finally {
+        button.disabled = false;
+        spinner.classList.add("hidden");
+        buttonText.textContent = "Sign in";
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EMS HR Attendances</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-mini"><div class="mark"></div><div><div class="brand-text">EMS HR</div><div class="brand-sub">Admin Panel</div></div></div>
+      <nav class="nav">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="employees.html">Employees</a>
+        <a href="departments.html">Departments</a>
+        <a href="salaries.html">Salaries</a>
+        <a href="notices.html">Issue Notices</a>
+        <a href="leaves.html">Leaves</a>
+        <a class="active" href="attendances.html">Attendances</a>
+        <a href="requests.html">Requests</a>
+      </nav>
+      <div class="sidebar-footer"><div class="profile-section"><div class="profile-avatar"></div><div><div class="profile-name">HR Admin</div><div class="profile-sub">Session active</div></div></div><button id="logoutBtn" class="btn btn--ghost" type="button">Logout</button></div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button id="mobileMenuBtn" class="icon-btn mobile-menu" type="button">M</button>
+          <div class="header-title"><h2>Attendances</h2><p>Record daily attendance and view analytics.</p></div>
+        </div>
+        <button id="createAttendanceBtn" class="btn btn--primary" type="button">Record Attendance</button>
+      </div>
+
+      <section class="table-wrap">
+        <div class="table-tools"><div class="left"><select id="attendanceEmployeeFilter"><option value="">All employees</option></select><input id="attendanceDateFilter" type="date"></div><div class="right"><span class="pill">Daily</span></div></div>
+        <div class="table-scroll"><table><thead><tr><th>Employee</th><th>Date</th><th>Status</th><th>Note</th><th style="text-align:right;">Actions</th></tr></thead><tbody id="attendancesTableBody"><tr><td colspan="5">Loading...</td></tr></tbody></table></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="attendanceModal" class="modal-backdrop hidden"><div class="modal"><header><h3 id="modalTitle">Record Attendance</h3><button id="closeAttendanceModal" class="btn btn--ghost">Close</button></header><div class="content"><form id="attendanceForm" class="form-grid"><input id="attendanceId" type="hidden"><div><label>Employee</label><select id="attendanceEmployeeId"></select></div><div><label>Date</label><input id="attendanceDate" type="date"></div><div class="span-2"><label>Status</label><select id="attendanceStatus"><option>PRESENT</option><option>ABSENT</option></select></div><div class="span-2"><label>Note</label><input id="attendanceNote"></div></form></div><footer><button id="saveAttendanceBtn" class="btn btn--primary">Save</button></footer></div></div>
+
+  <script src="app.js"></script>
+  <script src="auth.js"></script>
+  <script src="api.js"></script>
+  <script src="attendances.js"></script>
+  <script>
+    (async function () { const ok = await Auth.requireAuth(); if (!ok) return; document.getElementById('logoutBtn').addEventListener('click', async ()=>{ await Auth.logout(); window.location.href='index.html'; }); await AttendanceUI.init(); })();
+  </script>
+</body>
+</html>
