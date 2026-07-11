@@ -44,13 +44,16 @@
         <div class="topbar-actions"><span class="pill" id="lastUpdatedPill">Last updated: -</span></div>
       </div>
 
-      <section class="grid-cards">
+      <section class="grid-cards" style="grid-template-columns:repeat(4,minmax(0,1fr));">
         <div class="stat-card"><div><h3>Total Employees</h3><div class="value" id="cardTotalEmployees">0</div></div><div class="stat-icon">E</div></div>
         <div class="stat-card"><div><h3>Departments</h3><div class="value" id="cardDepartments">0</div></div><div class="stat-icon">D</div></div>
-        <div class="stat-card"><div><h3>Leaves</h3><div class="value">22</div></div><div class="stat-icon">L</div></div>
-        <div class="stat-card"><div><h3>Requests</h3><div class="value">32</div></div><div class="stat-icon">R</div></div>
-        <div class="stat-card"><div><h3>Attendance</h3><div class="value" id="cardAttendance">0%</div></div><div class="stat-icon">A</div></div>
-        <div class="stat-card"><div><h3>Notices</h3><div class="value">6</div></div><div class="stat-icon">N</div></div>
+        <div class="stat-card"><div><h3>Pending Leaves</h3><div class="value" id="cardLeaves">0</div></div><div class="stat-icon">L</div></div>
+        <div class="stat-card"><div><h3>Open Requests</h3><div class="value" id="cardRequests">0</div></div><div class="stat-icon">R</div></div>
+      </section>
+      
+      <section class="grid-cards" style="grid-template-columns:repeat(4,minmax(0,1fr));">
+        <div class="stat-card"><div><h3>Attendance Rate</h3><div class="value" id="cardAttendance">0%</div></div><div class="stat-icon">A</div></div>
+        <div class="stat-card"><div><h3>Active Notices</h3><div class="value" id="cardNotices">0</div></div><div class="stat-icon">N</div></div>
         <div class="stat-card"><div><h3>Active Staff</h3><div class="value" id="cardActiveEmployees">0</div></div><div class="stat-icon">HR</div></div>
         <div class="stat-card"><div><h3>New Joinees</h3><div class="value" id="cardNewJoinees">0</div></div><div class="stat-icon">+</div></div>
       </section>
@@ -63,12 +66,9 @@
         <div class="card">
           <h3 class="section-title">Recent Notices</h3>
           <table>
-            <thead><tr><th>Notice</th><th>Audience</th></tr></thead>
-            <tbody>
-              <tr><td>Frontend Deadline</td><td>Department</td></tr>
-              <tr><td>Backend Review</td><td>Department</td></tr>
-              <tr><td>Full Stack Demo</td><td>All Staff</td></tr>
-              <tr><td>Deployment Update</td><td>HR Team</td></tr>
+            <thead><tr><th>Notice</th><th>Priority</th></tr></thead>
+            <tbody id="recentNotices">
+              <tr><td colspan="2">Loading...</td></tr>
             </tbody>
           </table>
         </div>
@@ -102,12 +102,22 @@
         App.setLoaderVisible(true);
         const departmentsJson = await fetch(App.API_BASE + "/api/departments", { credentials:"include" }).then(r => r.json());
         const employeesJson = await fetch(App.API_BASE + "/api/employees?size=1000&page=0", { credentials:"include" }).then(r => r.json());
+        const leavesJson = await fetch(App.API_BASE + "/api/leaves", { credentials:"include" }).then(r => r.json());
+        const requestsJson = await fetch(App.API_BASE + "/api/requests", { credentials:"include" }).then(r => r.json());
+        const noticesJson = await fetch(App.API_BASE + "/api/notices", { credentials:"include" }).then(r => r.json());
+        
         const departments = departmentsJson.data || [];
         const employees = employeesJson.data && employeesJson.data.items ? employeesJson.data.items : [];
+        const leaves = leavesJson.data && leavesJson.data.items ? leavesJson.data.items : [];
+        const requests = requestsJson.data && requestsJson.data.items ? requestsJson.data.items : [];
+        const notices = noticesJson.data && noticesJson.data.items ? noticesJson.data.items : [];
 
         const active = employees.filter(e => e.active).length;
         document.getElementById("cardTotalEmployees").textContent = employees.length;
         document.getElementById("cardDepartments").textContent = departments.length;
+        document.getElementById("cardLeaves").textContent = leaves.length;
+        document.getElementById("cardRequests").textContent = requests.length;
+        document.getElementById("cardNotices").textContent = notices.length;
         document.getElementById("cardActiveEmployees").textContent = active;
         document.getElementById("cardAttendance").textContent = employees.length ? Math.round((active / employees.length) * 100) + "%" : "0%";
         document.getElementById("cardNewJoinees").textContent = Math.min(5, employees.length);
@@ -138,6 +148,14 @@
             <strong>${counts.get(d.id) || 0}</strong>
           </div>
         `).join("");
+
+        document.getElementById("recentNotices").innerHTML = notices.slice(0, 4).map(n => {
+          const priorityClass = n.priority === 'HIGH' ? 'pill--warning' : n.priority === 'MEDIUM' ? 'pill--info' : 'pill--active';
+          return `<tr>
+            <td>${App.escapeHtml(n.title)}</td>
+            <td><span class="pill ${priorityClass}">${App.escapeHtml(n.priority || 'NORMAL')}</span></td>
+          </tr>`;
+        }).join("") || "<tr><td colspan='2'>No notices yet.</td></tr>";
 
         document.getElementById("lastUpdatedPill").textContent = "Last updated: " + new Date().toLocaleString();
       } catch (e) {

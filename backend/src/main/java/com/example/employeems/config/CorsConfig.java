@@ -29,8 +29,14 @@ public class CorsConfig {
             config.addAllowedOrigin(origin.trim());
         }
 
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
+        config.addAllowedHeader("Content-Type");
+        config.addAllowedHeader("Accept");
+        config.addAllowedHeader("Authorization");
+        config.addAllowedMethod("GET");
+        config.addAllowedMethod("POST");
+        config.addAllowedMethod("PUT");
+        config.addAllowedMethod("DELETE");
+        config.addAllowedMethod("OPTIONS");
         config.setAllowCredentials(true); // IMPORTANT for session cookie
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

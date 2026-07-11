@@ -3,7 +3,9 @@ package com.example.employeems.controller;
 import com.example.employeems.dto.ApiResponse;
 import com.example.employeems.entity.EmployeeRequest;
 import com.example.employeems.dto.RequestResponse;
+import com.example.employeems.dto.RequestCreateRequest;
 import com.example.employeems.service.RequestService;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,12 +27,11 @@ public class RequestController {
     public ApiResponse<RequestResponse> getById(@PathVariable Long id) { return ApiResponse.ok("Request loaded", toDto(requestService.getById(id))); }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<RequestResponse> create(@RequestBody HashMap<String,Object> body) {
-        Number empId = (Number) body.get("employeeId");
+    public ApiResponse<RequestResponse> create(@Valid @RequestBody RequestCreateRequest request) {
         EmployeeRequest r = new EmployeeRequest();
-        r.setTitle((String) body.get("title"));
-        r.setDescription((String) body.get("description"));
-        EmployeeRequest created = requestService.create(empId.longValue(), r);
+        r.setTitle(request.getTitle());
+        r.setDescription(request.getDescription());
+        EmployeeRequest created = requestService.create(request.getEmployeeId(), r);
         return ApiResponse.ok("Request created", toDto(created));
     }
 

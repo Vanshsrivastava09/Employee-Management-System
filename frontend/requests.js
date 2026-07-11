@@ -25,15 +25,38 @@ const RequestsUI = (function () {
       const items = res.data && res.data.items ? res.data.items : [];
       const filter = document.getElementById('requestEmployeeFilter').value;
       const body = document.getElementById('requestsTableBody');
-      const rows = items.filter(it => !filter || String(it.employee.id) === filter).map(it => `
-        <tr>
-          <td>${App.escapeHtml(it.employee.fullName)}</td>
-          <td>${App.escapeHtml(it.title)}</td>
-          <td>${App.escapeHtml(it.status||'')}</td>
-          <td style="text-align:right;"><button data-id="${it.id}" class="btn btn--soft btn-approve">Approve</button> <button data-id="${it.id}" class="btn btn--danger btn-reject">Reject</button></td>
-        </tr>
-      `).join('') || '<tr><td colspan="4">No requests</td></tr>';
-      body.innerHTML = rows;
+      
+      const filteredItems = items.filter(it => !filter || String(it.employee.id) === filter);
+      
+      if (filteredItems.length === 0) {
+        body.innerHTML = `
+          <tr>
+            <td colspan="4">
+              <div class="empty-state">
+                <div class="empty-state-icon">📝</div>
+                <div class="empty-state-title">No requests found</div>
+                <div class="empty-state-description">
+                  ${filter ? 'Try selecting a different employee.' : 'Handle employee requests and approval workflows.'}
+                </div>
+                ${!filter ? '<div class="empty-state-action"><button class="btn btn--primary" onclick="document.getElementById(\'createRequestBtn\').click()">Create Request</button></div>' : ''}
+              </div>
+            </td>
+          </tr>
+        `;
+      } else {
+        const rows = filteredItems.map(it => {
+          const statusClass = it.status === 'APPROVED' ? 'pill--active' : it.status === 'REJECTED' ? 'pill--inactive' : 'pill--warning';
+          const statusText = it.status || 'PENDING';
+          return `
+          <tr>
+            <td>${App.escapeHtml(it.employee.fullName)}</td>
+            <td>${App.escapeHtml(it.title)}</td>
+            <td><span class="pill ${statusClass}">${App.escapeHtml(statusText)}</span></td>
+            <td style="text-align:right;"><button data-id="${it.id}" class="btn btn--soft btn-approve">Approve</button> <button data-id="${it.id}" class="btn btn--danger btn-reject">Reject</button></td>
+          </tr>
+        `}).join('');
+        body.innerHTML = rows;
+      }
 
       document.querySelectorAll('.btn-approve').forEach(b => b.addEventListener('click', async ev => { const id = ev.currentTarget.getAttribute('data-id'); await Api.put('/api/requests/' + id + '/status', { status: 'APPROVED' }); App.showToast('Approved','success'); await loadRequests(); }));
       document.querySelectorAll('.btn-reject').forEach(b => b.addEventListener('click', async ev => { const id = ev.currentTarget.getAttribute('data-id'); await Api.put('/api/requests/' + id + '/status', { status: 'REJECTED' }); App.showToast('Rejected','success'); await loadRequests(); }));
@@ -45,7 +68,47 @@ const RequestsUI = (function () {
   function openModal(){ document.getElementById('requestModal').classList.remove('hidden'); }
   function closeModal(){ document.getElementById('requestModal').classList.add('hidden'); }
 
-  async function saveRequest(){ const emp = document.getElementById('requestEmployeeId').value; const title = document.getElementById('requestTitle').value; const desc = document.getElementById('requestDescription').value; if (!emp) return App.showToast('Select employee','error'); try { await Api.post('/api/requests', { employeeId: Number(emp), title, description: desc }); App.showToast('Created','success'); closeModal(); await loadRequests(); } catch(e){ App.showToast('Save failed','error'); } }
+  async function saveRequest(){ 
+    const emp = document.getElementById('requestEmployeeId').value; 
+    const title = document.getElementById('requestTitle').value; 
+    const desc = document.getElementById('requestDescription').value;
+    
+    // Enhanced validation
+    let hasError = false;
+    
+    if (!emp) {
+      document.getElementById('requestEmployeeId').style.borderColor = 'var(--danger)';
+      hasError = true;
+    } else {
+      document.getElementById('requestEmployeeId').style.borderColor = 'var(--border)';
+    }
+    
+    if (!title || title.trim().length < 3) {
+      document.getElementById('requestTitle').style.borderColor = 'var(--danger)';
+      hasError = true;
+    } else {
+      document.getElementById('requestTitle').style.borderColor = 'var(--border)';
+    }
+    
+    if (!desc || desc.trim().length < 10) {
+      document.getElementById('requestDescription').style.borderColor = 'var(--danger)';
+      hasError = true;
+    } else {
+      document.getElementById('requestDescription').style.borderColor = 'var(--border)';
+    }
+    
+    if (hasError) {
+      App.showToast('Please fix the highlighted fields', 'error');
+      return;
+    }
+    
+    try { 
+      await Api.post('/api/requests', { employeeId: Number(emp), title: title.trim(), description: desc.trim() }); 
+      App.showToast('Created','success'); 
+      closeModal(); 
+      await loadRequests(); 
+    } catch(e){ App.showToast('Save failed','error'); } 
+  }
 
   return { init };
 })();

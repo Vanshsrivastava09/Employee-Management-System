@@ -18,6 +18,7 @@ import com.example.employeems.entity.Employee;
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     Optional<Employee> findByEmail(String email);
+    Optional<Employee> findByResetToken(String resetToken);
 
     /**
      * Search employees by keyword in fullName/email/phone.

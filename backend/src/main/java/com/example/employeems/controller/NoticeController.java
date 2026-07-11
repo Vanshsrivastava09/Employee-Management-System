@@ -1,9 +1,11 @@
 package com.example.employeems.controller;
 
 import com.example.employeems.dto.ApiResponse;
+import com.example.employeems.dto.NoticeCreateRequest;
 import com.example.employeems.entity.IssueNotice;
 import com.example.employeems.dto.NoticeResponse;
 import com.example.employeems.service.NoticeService;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,10 +28,22 @@ public class NoticeController {
     public ApiResponse<NoticeResponse> getById(@PathVariable Long id) { return ApiResponse.ok("Notice loaded", toDto(noticeService.getById(id))); }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<NoticeResponse> create(@RequestBody IssueNotice payload) { return ApiResponse.ok("Notice created", toDto(noticeService.create(payload))); }
+    public ApiResponse<NoticeResponse> create(@Valid @RequestBody NoticeCreateRequest request) {
+        IssueNotice notice = new IssueNotice();
+        notice.setTitle(request.getTitle());
+        notice.setMessage(request.getMessage());
+        notice.setPriority(request.getPriority());
+        return ApiResponse.ok("Notice created", toDto(noticeService.create(notice)));
+    }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<NoticeResponse> update(@PathVariable Long id, @RequestBody IssueNotice payload) { return ApiResponse.ok("Notice updated", toDto(noticeService.update(id, payload))); }
+    public ApiResponse<NoticeResponse> update(@PathVariable Long id, @Valid @RequestBody NoticeCreateRequest request) {
+        IssueNotice notice = new IssueNotice();
+        notice.setTitle(request.getTitle());
+        notice.setMessage(request.getMessage());
+        notice.setPriority(request.getPriority());
+        return ApiResponse.ok("Notice updated", toDto(noticeService.update(id, notice)));
+    }
 
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<Object> delete(@PathVariable Long id) { noticeService.delete(id); return ApiResponse.ok("Notice deleted", null); }

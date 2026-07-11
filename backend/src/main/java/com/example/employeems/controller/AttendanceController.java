@@ -4,6 +4,7 @@ import com.example.employeems.dto.ApiResponse;
 import com.example.employeems.entity.Attendance;
 import com.example.employeems.dto.AttendanceResponse;
 import com.example.employeems.service.AttendanceService;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,13 +26,12 @@ public class AttendanceController {
     public ApiResponse<AttendanceResponse> getById(@PathVariable Long id) { return ApiResponse.ok("Attendance loaded", toDto(attendanceService.getById(id))); }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<AttendanceResponse> create(@RequestBody HashMap<String,Object> body) {
-        Number empId = (Number) body.get("employeeId");
+    public ApiResponse<AttendanceResponse> create(@Valid @RequestBody com.example.employeems.dto.AttendanceCreateRequest request) {
         Attendance a = new Attendance();
-        a.setDate(body.get("date") == null ? null : java.time.LocalDate.parse((String)body.get("date")));
-        a.setStatus((String) body.get("status"));
-        a.setNote((String) body.get("note"));
-        Attendance created = attendanceService.create(empId.longValue(), a);
+        a.setDate(request.getDate());
+        a.setStatus(request.getStatus());
+        a.setNote(request.getNote());
+        Attendance created = attendanceService.create(request.getEmployeeId(), a);
         return ApiResponse.ok("Attendance recorded", toDto(created));
     }
 

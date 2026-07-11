@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 /**
  * Entity class for the employees table.
@@ -65,6 +66,24 @@ public class Employee {
     @Column(name = "photo_url", length = 300)
     private String photoUrl;
 
+    /**
+     * BCrypt hash of password for employee self-service portal.
+     */
+    @Column(name = "password_hash", length = 255)
+    private String passwordHash;
+
+    /**
+     * Password reset token.
+     */
+    @Column(name = "reset_token", length = 255)
+    private String resetToken;
+
+    /**
+     * Password reset token expiry timestamp.
+     */
+    @Column(name = "reset_token_expiry")
+    private LocalDateTime resetTokenExpiry;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -103,6 +122,18 @@ public class Employee {
         return photoUrl;
     }
 
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public LocalDateTime getResetTokenExpiry() {
+        return resetTokenExpiry;
+    }
+
     public Instant getCreatedAt() {
         return createdAt;
     }
@@ -137,6 +168,18 @@ public class Employee {
 
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+
+    public void setResetTokenExpiry(LocalDateTime resetTokenExpiry) {
+        this.resetTokenExpiry = resetTokenExpiry;
     }
 
     public void setCreatedAt(Instant createdAt) {

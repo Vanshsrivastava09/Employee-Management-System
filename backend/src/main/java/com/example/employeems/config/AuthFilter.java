@@ -41,7 +41,7 @@ public class AuthFilter extends OncePerRequestFilter {
         }
 
         // Public endpoints
-        if (path.startsWith("/api/auth/")) {
+        if (path.startsWith("/api/auth/") || path.equals("/api/health")) {
             filterChain.doFilter(request, response);
             return;
         }

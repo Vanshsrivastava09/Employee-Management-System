@@ -6,6 +6,7 @@ import com.example.employeems.entity.Employee;
 import com.example.employeems.repository.AdminUserRepository;
 import com.example.employeems.repository.DepartmentRepository;
 import com.example.employeems.repository.EmployeeRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,9 @@ import java.time.Instant;
  */
 @Configuration
 public class DataSeeder {
+
+    @Value("${app.admin.email:admin@company.com}")
+    private String adminEmail;
 
     @Bean
     CommandLineRunner seedData(
@@ -52,6 +56,7 @@ public class DataSeeder {
         AdminUser admin = new AdminUser();
         admin.setUsername("admin");
         admin.setPasswordHash(passwordEncoder.encode("admin123"));
+        admin.setEmail(adminEmail);
         adminUserRepository.save(admin);
     }
 

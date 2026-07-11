@@ -3,7 +3,9 @@ package com.example.employeems.controller;
 import com.example.employeems.dto.ApiResponse;
 import com.example.employeems.entity.Salary;
 import com.example.employeems.dto.SalaryResponse;
+import com.example.employeems.dto.SalaryCreateRequest;
 import com.example.employeems.service.SalaryService;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,18 +50,13 @@ public class SalaryController {
     public ApiResponse<SalaryResponse> getById(@PathVariable Long id) { return ApiResponse.ok("Salary loaded", toDto(salaryService.getById(id))); }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<SalaryResponse> create(@RequestBody HashMap<String,Object> body) {
-        Number empId = (Number) body.get("employeeId");
-        BigDecimal amount = body.get("amount") == null ? null : new BigDecimal(body.get("amount").toString());
-        String period = (String) body.get("period");
-        String status = (String) body.get("status");
-
+    public ApiResponse<SalaryResponse> create(@Valid @RequestBody SalaryCreateRequest request) {
         Salary s = new Salary();
-        s.setAmount(amount);
-        s.setPeriod(period);
-        s.setStatus(status == null ? "PENDING" : status);
+        s.setAmount(request.getAmount());
+        s.setPeriod(request.getPeriod());
+        s.setStatus(request.getStatus() == null ? "PENDING" : request.getStatus());
 
-        Salary created = salaryService.create(empId.longValue(), s);
+        Salary created = salaryService.create(request.getEmployeeId(), s);
         return ApiResponse.ok("Salary created", toDto(created));
     }
 

@@ -26,6 +26,9 @@ CREATE TABLE IF NOT EXISTS employees (
   department_id BIGINT NOT NULL,
   is_active TINYINT(1) NOT NULL DEFAULT 1,
   photo_url VARCHAR(300),
+  password_hash VARCHAR(255),
+  reset_token VARCHAR(255),
+  reset_token_expiry TIMESTAMP NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
@@ -45,8 +48,12 @@ CREATE TABLE IF NOT EXISTS admin_users (
   id BIGINT NOT NULL AUTO_INCREMENT,
   username VARCHAR(60) NOT NULL,
   password_hash VARCHAR(200) NOT NULL,
+  email VARCHAR(180) NOT NULL,
+  reset_token VARCHAR(255),
+  reset_token_expiry TIMESTAMP NULL,
   PRIMARY KEY (id),
-  UNIQUE KEY uk_admin_users_username (username)
+  UNIQUE KEY uk_admin_users_username (username),
+  UNIQUE KEY uk_admin_users_email (email)
 );
 
 -- Salaries table

@@ -3,7 +3,9 @@ package com.example.employeems.controller;
 import com.example.employeems.dto.ApiResponse;
 import com.example.employeems.entity.LeaveRequest;
 import com.example.employeems.dto.LeaveResponse;
+import com.example.employeems.dto.LeaveCreateRequest;
 import com.example.employeems.service.LeaveService;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,13 +27,12 @@ public class LeaveController {
     public ApiResponse<LeaveResponse> getById(@PathVariable Long id) { return ApiResponse.ok("Leave loaded", toDto(leaveService.getById(id))); }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponse<LeaveResponse> create(@RequestBody HashMap<String,Object> body) {
-        Number empId = (Number) body.get("employeeId");
+    public ApiResponse<LeaveResponse> create(@Valid @RequestBody LeaveCreateRequest request) {
         LeaveRequest lr = new LeaveRequest();
-        lr.setStartDate(body.get("startDate") == null ? null : java.time.LocalDate.parse((String)body.get("startDate")));
-        lr.setEndDate(body.get("endDate") == null ? null : java.time.LocalDate.parse((String)body.get("endDate")));
-        lr.setReason((String) body.get("reason"));
-        LeaveRequest created = leaveService.create(empId.longValue(), lr);
+        lr.setStartDate(request.getStartDate());
+        lr.setEndDate(request.getEndDate());
+        lr.setReason(request.getReason());
+        LeaveRequest created = leaveService.create(request.getEmployeeId(), lr);
         return ApiResponse.ok("Leave requested", toDto(created));
     }
 

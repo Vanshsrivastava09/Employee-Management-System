@@ -10,7 +10,8 @@
     size: 8,
     totalPages: 1,
     search: "",
-    departmentId: ""
+    departmentId: "",
+    photoFile: null
   };
 
   async function loadDepartments() {
@@ -89,6 +90,26 @@
     tbody.innerHTML = "";
 
     const items = (p && p.items) ? p.items : [];
+    
+    // Empty state
+    if (items.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6">
+            <div class="empty-state">
+              <div class="empty-state-icon">👥</div>
+              <div class="empty-state-title">No employees found</div>
+              <div class="empty-state-description">
+                ${state.search || state.departmentId ? 'Try adjusting your filters or search terms.' : 'Get started by adding your first employee.'}
+              </div>
+              ${!state.search && !state.departmentId ? '<div class="empty-state-action"><button class="btn btn--primary" onclick="EmployeesUI.openModal(\'create\', null)">Add Employee</button></div>' : ''}
+            </div>
+          </td>
+        </tr>
+      `;
+      return;
+    }
+    
     for (const emp of items) {
       const tr = document.createElement("tr");
 
@@ -103,7 +124,7 @@
       tr.innerHTML = `
         <td>
           <div class="employee-cell">
-            <img class="avatar" src="${emp.photoUrl ? emp.photoUrl : ''}" alt="avatar" onerror="this.style.display='none';"/>
+            <img class="avatar" src="${App.mediaUrl(emp.photoUrl)}" alt="avatar" onerror="this.style.display='none';"/>
             <div>
               <div class="employee-name">${escape(emp.fullName || '')}</div>
               <div class="employee-email">ID: ${emp.id || '-'}</div>
@@ -121,7 +142,7 @@
       tr.children[4].appendChild(activePill);
       tr.children[5].innerHTML = `
         <div class="actions">
-          <button class="btn btn--soft" type="button" data-action="edit" data-id="${emp.id}">View</button>
+          <button class="btn btn--soft" type="button" data-action="view" data-id="${emp.id}">View</button>
           <button class="btn btn--danger" type="button" data-action="delete" data-id="${emp.id}">Delete</button>
         </div>
       `;
@@ -187,7 +208,7 @@
     el("isActive").checked = employee && employee.active ? true : false;
 
     // Photo fields:
-    el("photoUrlPreview").src = employee && employee.photoUrl ? employee.photoUrl : "";
+    el("photoUrlPreview").src = employee && employee.photoUrl ? App.mediaUrl(employee.photoUrl) : "";
     el("photoUrlPreview").style.display = employee && employee.photoUrl ? "block" : "none";
 
     el("photoFile").value = "";
@@ -213,21 +234,50 @@
     const departmentId = el("departmentId").value ? Number(el("departmentId").value) : null;
     const active = el("isActive").checked;
 
-    // Minimal validation (beginner friendly)
-    if (!fullName) return App.showToast("Full name is required", "error");
-    if (!email) return App.showToast("Email is required", "error");
-    if (!phone) return App.showToast("Phone is required", "error");
-    if (!departmentId) return App.showToast("Department is required", "error");
+    // Enhanced validation with inline feedback
+    let hasError = false;
+    
+    if (!fullName) {
+      el("fullName").style.borderColor = "var(--danger)";
+      hasError = true;
+    } else {
+      el("fullName").style.borderColor = "var(--border)";
+    }
+    
+    if (!email || !email.includes("@")) {
+      el("email").style.borderColor = "var(--danger)";
+      hasError = true;
+    } else {
+      el("email").style.borderColor = "var(--border)";
+    }
+    
+    if (!phone || phone.length < 10) {
+      el("phone").style.borderColor = "var(--danger)";
+      hasError = true;
+    } else {
+      el("phone").style.borderColor = "var(--border)";
+    }
+    
+    if (!departmentId) {
+      el("departmentId").style.borderColor = "var(--danger)";
+      hasError = true;
+    } else {
+      el("departmentId").style.borderColor = "var(--border)";
+    }
+    
+    if (hasError) {
+      App.showToast("Please fix the highlighted fields", "error");
+      return;
+    }
 
-    const photoUrl = el("photoUrlPreview").style.display === "block" ? el("photoUrlPreview").src : null;
-
+    // We no longer send local preview URL as photoUrl.
+    // Real upload happens via multipart to backend after employee is created/updated.
     const payload = {
       fullName,
       email,
       phone,
       departmentId,
-      isActive: active,
-      photoUrl
+      isActive: active
     };
 
     try {
@@ -242,6 +292,25 @@
 
       if (!res || res.success === false) throw new Error(res && res.message ? res.message : "Save failed");
 
+      const saved = res.data || {};
+      const empId = saved.id || id;
+
+      // Upload photo if selected
+      if (state.photoFile && empId) {
+        const fd = new FormData();
+        fd.append("file", state.photoFile);
+
+        const photoRes = await fetch(App.API_BASE + "/api/employees/" + empId + "/photo", {
+          method: "POST",
+          credentials: "include",
+          body: fd
+        }).then(r => r.json());
+
+        if (!photoRes || photoRes.success === false) {
+          throw new Error(photoRes && photoRes.message ? photoRes.message : "Photo upload failed");
+        }
+      }
+
       App.showToast(res.message || "Saved", "success");
       closeModal();
       loadEmployees();
@@ -253,10 +322,14 @@
   }
 
   async function handlePhotoUpload(file) {
-    // In this portfolio version, we support photoUrl via preview URL only.
-    // Upload endpoint is not wired yet to avoid backend-file issues.
-    // Keeping UI ready for upload integration later.
-    if (!file) return;
+    if (!file) {
+      state.photoFile = null;
+      el("photoUrlPreview").src = "";
+      el("photoUrlPreview").style.display = "none";
+      return;
+    }
+
+    state.photoFile = file;
 
     const url = URL.createObjectURL(file);
     el("photoUrlPreview").src = url;
@@ -272,10 +345,40 @@
 
     el("createEmployeeBtn").addEventListener("click", () => openModal("create", null));
 
+    // Export CSV
+    el("exportCsvBtn") && el("exportCsvBtn").addEventListener("click", async () => {
+      try {
+        App.setLoaderVisible(true);
+        const params = new URLSearchParams();
+        if (state.search) params.set("search", state.search);
+        if (state.departmentId) params.set("departmentId", state.departmentId);
+
+        const url = App.API_BASE + "/api/employees/export?" + params.toString();
+        const res = await fetch(url, { method: "GET", credentials: "include" });
+
+        if (!res.ok) throw new Error("CSV export failed");
+
+        const blob = await res.blob();
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "employees.csv";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } catch (e) {
+        App.showToast(e.message || "CSV export failed", "error");
+      } finally {
+        App.setLoaderVisible(false);
+      }
+    });
+
     el("employeeForm").addEventListener("submit", submitEmployeeForm);
     el("saveEmployeeBtn").addEventListener("click", () => el("employeeForm").requestSubmit());
 
-    el("closeModalBtn").addEventListener("click", closeModal);
+    el("closeModalBtn").addEventListener("click", () => {
+      state.photoFile = null;
+      closeModal();
+    });
 
     el("photoFile").addEventListener("change", (e) => handlePhotoUpload(e.target.files[0]));
 
@@ -287,13 +390,9 @@
       const action = btn.getAttribute("data-action");
       const id = Number(btn.getAttribute("data-id"));
 
-      if (action === "edit") {
-        const empRes = await Api.get("/api/employees/" + id);
-        if (!empRes || empRes.success === false) {
-          App.showToast("Failed to fetch employee", "error");
-          return;
-        }
-        openModal("edit", empRes.data);
+      if (action === "view") {
+        // Navigate to employee profile page
+        window.location.href = "profile.html?id=" + id;
       }
 
       if (action === "delete") {

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Employee Management System (EMS HR)
 
 A modern Employee Management System (HRMS) developed using Java Spring Boot, HTML, CSS, JavaScript, and MySQL. The project simulates a real-world HR dashboard with modules for employee management, departments, attendance, leaves, salary management, and admin operations.
@@ -9,16 +8,18 @@ A modern Employee Management System (HRMS) developed using Java Spring Boot, HTM
 
 ## Features
 
-* Employee Management
-* Department Management
-* Attendance Tracking
-* Leave Management
-* Salary Management
-* HR Dashboard Analytics
-* Responsive Admin Panel
-* CRUD Operations
-* REST API Architecture
-* Modern HRMS User Interface
+* **Public Landing Page** - Modern marketing site with hero, about, and features sections
+* **Employee Management** - Complete employee profiles with department assignments
+* **Department Management** - Organize employees by departments
+* **Attendance Tracking** - Daily attendance records with analytics
+* **Leave Management** - Streamlined leave request workflow
+* **Salary Management** - Salary records and payment tracking
+* **HR Dashboard Analytics** - Real-time insights and metrics
+* **Password Reset Flow** - Secure forgot password for admins and employees
+* **Responsive Admin Panel** - Mobile-friendly interface
+* **CRUD Operations** - Full create, read, update, delete functionality
+* **REST API Architecture** - Well-structured backend endpoints
+* **Modern UI Design** - Consistent design system with indigo/purple theme
 
 ## Tech Stack
 
@@ -37,7 +38,7 @@ A modern Employee Management System (HRMS) developed using Java Spring Boot, HTM
 
 ### Database
 
-* MySQL
+* MySQL (production) / H2 (development)
 
 ## Modules
 
@@ -79,7 +80,7 @@ A modern Employee Management System (HRMS) developed using Java Spring Boot, HTM
 
 ## Project Structure
 
-```bash id="4f7m9d"
+```bash
 backend/
 frontend/
 database/
@@ -90,13 +91,13 @@ README.md
 
 ### Clone Repository
 
-```bash id="8t5h1m"
+```bash
 git clone YOUR_GITHUB_REPOSITORY_LINK
 ```
 
 ### Backend Setup
 
-```bash id="p8d3n2"
+```bash
 cd backend
 ./gradlew build
 ./gradlew bootRun
@@ -104,14 +105,14 @@ cd backend
 
 ### Frontend Setup
 
-```bash id="c6w1r4"
+```bash
 cd frontend
 python -m http.server 5500
 ```
 
 Open in browser:
 
-```bash id="d4m2x7"
+```bash
 http://localhost:5500
 ```
 
@@ -157,304 +158,203 @@ Add screenshots of:
 
 Vansh Srivastava
 B.Tech CSCE Student | Java Full Stack & Data Analytics Enthusiast
-=======
-# Employee Management System
 
-Beginner-friendly Java Full Stack project for a fresher interview portfolio.
+---
 
-- Backend: Spring Boot 3.3, Gradle Wrapper, Java 17-compatible code
-- Frontend: HTML, CSS, JavaScript
-- Database: MySQL
-- Auth: simple admin login with `HttpSession`
-- UI: HRMS-style college major project admin panel
+## Development Setup
 
-## Corrected Project Structure
+### Quick Start (H2 Database)
 
-```text
-Employee-Management System/
-  backend/
-    build.gradle
-    settings.gradle
-    gradlew
-    gradlew.bat
-    gradle/wrapper/
-      gradle-wrapper.jar
-      gradle-wrapper.properties
-    src/main/java/com/example/employeems/
-      EmployeeMsApplication.java
-      config/
-        AuthFilter.java
-        CorsConfig.java
-        DataSeeder.java
-        SecurityConfig.java
-      controller/
-        AuthController.java
-        DepartmentController.java
-        EmployeeController.java
-      dto/
-      entity/
-        AdminUser.java
-        Department.java
-        Employee.java
-      exception/
-      repository/
-      service/
-      util/
-    src/main/resources/application.properties
-  database/
-    schema.sql
-    data.sql
-  frontend/
-    index.html
-    signup.html
-    employee-login.html
-    dashboard.html
-    employees.html
-    departments.html
-    app.js
-    api.js
-    auth.js
-    employees.js
-    departments.js
-    styles.css
-```
+For development, the app uses H2 in-memory database by default:
 
-`pom.xml` was removed so VS Code and the Java extensions treat the backend as one clean Gradle project.
-
-## What Was Fixed
-
-- Restored proper Gradle wrapper files, including `gradle-wrapper.jar`.
-- Replaced the broken wrapper scripts with standard Gradle-generated scripts.
-- Removed Maven/Gradle conflict by deleting `backend/pom.xml`.
-- Changed Java config so Java 21 on your PC can compile Java 17-compatible bytecode.
-- Removed unnecessary Lombok config because the project uses normal getters/setters.
-- Removed incorrect Spring Session JDBC config. The project now uses default servlet `HttpSession`.
-- Added `SecurityConfig` with a BCrypt `PasswordEncoder` bean.
-- Added `DataSeeder` to create demo admin, departments, and employee records.
-- Fixed frontend login form JavaScript.
-- Fixed frontend HTML escaping helper.
-- Rebuilt the frontend as a practical HRMS UI: login, signup, dashboard widgets, employees table, department cards, responsive sidebar, toasts, loaders, and custom delete confirmation.
-- Added `POST /api/departments` so departments can be created from the UI.
-
-## Database Setup
-
-Start MySQL first.
-
-Option A: let Spring Boot create/update tables automatically:
-
-```powershell
-cd "C:\Users\KIIT0001\Desktop\Employee-Management System\backend"
-$env:MYSQL_USER="root"
-$env:MYSQL_PASSWORD="your_mysql_password"
-.\gradlew.bat bootRun
-```
-
-Option B: manually create schema and sample data:
-
-```powershell
-mysql -u root -p < "..\database\schema.sql"
-mysql -u root -p < "..\database\data.sql"
-```
-
-The app uses:
-
-```properties
-spring.datasource.url=${MYSQL_URL:jdbc:mysql://localhost:3306/employee_ms?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
-spring.datasource.username=${MYSQL_USER:root}
-spring.datasource.password=${MYSQL_PASSWORD:}
-```
-
-Default login:
-
-```text
-username: admin
-password: admin123
-```
-
-## Run Backend In VS Code
-
-Open this folder in VS Code:
-
-```powershell
-cd "C:\Users\KIIT0001\Desktop\Employee-Management System"
-code .
-```
-
-Then run:
-
-```powershell
+```bash
 cd backend
-$env:MYSQL_USER="root"
-$env:MYSQL_PASSWORD="your_mysql_password"
-.\gradlew.bat bootRun
+./gradlew bootRun
 ```
 
-Backend URL:
+The backend will start on `http://localhost:8080` with H2 database (no MySQL required).
 
-```text
-http://localhost:8080
-```
+### Production Setup (MySQL)
 
-Build check:
+For production deployment with MySQL:
 
-```powershell
-cd backend
-.\gradlew.bat clean build
-```
+1. Set environment variables:
+   ```bash
+   export MYSQL_URL=jdbc:mysql://localhost:3306/employee_ms
+   export MYSQL_USER=root
+   export MYSQL_PASSWORD=your_password
+   export ADMIN_USERNAME=admin
+   export ADMIN_PASSWORD=your_admin_password
+   ```
 
-## Run Frontend
+2. Run with production profile:
+   ```bash
+   cd backend
+   ./gradlew bootRun --args='--spring.profiles.active=prod'
+   ```
 
-Use a static server so browser cookies work correctly.
+### Default Credentials
 
-With VS Code Live Server:
+- **Username:** admin
+- **Password:** admin123
 
-1. Install the "Live Server" extension.
-2. Right-click `frontend/index.html`.
-3. Click "Open with Live Server".
-4. Use `http://localhost:5500/frontend/index.html` or the URL shown by Live Server.
+### Frontend Setup
 
-With Python:
-
-```powershell
-cd "C:\Users\KIIT0001\Desktop\Employee-Management System\frontend"
+```bash
+cd frontend
 python -m http.server 5500
 ```
 
-Then open:
+Open `http://localhost:5500/index.html` in your browser.
 
-```text
-http://localhost:5500/index.html
+## Security Features
+
+- BCrypt password hashing for all passwords
+- Session-based authentication with 30-minute timeout
+- Input validation using Jakarta Validation API
+- Rate limiting (5 failed login attempts = 15-minute lockout)
+- CORS configuration with restricted headers and methods
+- Server-side error logging with SLF4J
+- Environment-based configuration for secrets
+- Global exception handler to prevent stack trace leakage
+- Health check endpoint for monitoring
+- Secure password reset flow with time-limited tokens
+- Email enumeration protection
+
+## API Endpoints
+
+### Authentication
+- `POST /api/auth/login` - Login
+- `POST /api/auth/logout` - Logout
+- `GET /api/auth/me` - Check session status
+- `POST /api/auth/forgot-password` - Request password reset
+- `POST /api/auth/reset-password` - Reset password with token
+- `GET /api/health` - Health check
+
+### Employees
+- `GET /api/employees` - List employees
+- `POST /api/employees` - Create employee
+- `GET /api/employees/{id}` - Get employee
+- `PUT /api/employees/{id}` - Update employee
+- `DELETE /api/employees/{id}` - Delete employee
+
+### Departments
+- `GET /api/departments` - List departments
+- `POST /api/departments` - Create department
+
+### Other Modules
+- `GET/POST/PUT/DELETE /api/attendances` - Attendance management
+- `GET/POST/PUT/DELETE /api/leaves` - Leave requests
+- `GET/POST/PUT/DELETE /api/salaries` - Salary records
+- `GET/POST/PUT/DELETE /api/notices` - Issue notices
+- `GET/POST/PUT/DELETE /api/requests` - Employee requests
+
+## Deployment Checklist
+
+Before deploying to production:
+
+### 1. Environment Variables
+Set these environment variables in your production environment:
+- `MYSQL_URL` - MySQL connection string (e.g., `jdbc:mysql://your-host:3306/employee_ms`)
+- `MYSQL_USER` - Database username
+- `MYSQL_PASSWORD` - Database password (use strong password)
+- `ADMIN_USERNAME` - Admin username (change from default)
+- `ADMIN_PASSWORD` - Admin password (use strong password, minimum 12 characters)
+- `ADMIN_EMAIL` - Admin email for password reset
+- `SMTP_HOST` - SMTP server host (e.g., `smtp.gmail.com`)
+- `SMTP_PORT` - SMTP server port (e.g., `587`)
+- `SMTP_USERNAME` - SMTP authentication username
+- `SMTP_PASSWORD` - SMTP authentication password
+- `SMTP_FROM` - From email address for password reset emails
+- `FRONTEND_URL` - Frontend URL for password reset links (e.g., `https://yourdomain.com`)
+- `CORS_ALLOWED_ORIGINS` - Frontend domain(s) (comma-separated, e.g., `https://yourdomain.com`)
+
+### 2. Database Setup
+- Ensure MySQL 8.0+ is running on your production server
+- Create database: `CREATE DATABASE employee_ms;`
+- Run `database/schema.sql` to create tables
+- Run `database/data.sql` for sample data (optional, for testing)
+- Configure proper database backups
+
+### 3. Security Configuration
+- Set `spring.profiles.active=prod` in production
+- Update CORS origins to production domain only
+- Change default admin credentials immediately
+- Enable HTTPS/TLS for all endpoints
+- Configure firewall rules to restrict database access
+- Set up database user with minimal required permissions
+
+### 4. Build & Package
+```bash
+cd backend
+./gradlew clean bootJar
+```
+This creates `backend/build/libs/employee-ms-*.jar`
+
+### 5. Docker Deployment (Recommended)
+```bash
+# Build and start with Docker Compose
+docker-compose up -d
+
+# Or build individual images
+docker build -t employee-ms-backend .
+docker run -p 8080:8080 --env-file .env employee-ms-backend
 ```
 
-Screens to check:
+### 6. Traditional Deployment
+- Deploy `backend/build/libs/*.jar` to your server
+- Deploy `frontend/` folder to static hosting (Vercel, Netlify, etc.)
+- Update frontend `API_BASE` in `app.js` to production backend URL
+- Configure reverse proxy (Nginx/Apache) for SSL termination
 
-- `http://localhost:5500/index.html` - HR login
-- `http://localhost:5500/signup.html` - HR signup UI
-- `http://localhost:5500/employee-login.html` - employee login UI
-- `http://localhost:5500/dashboard.html` - dashboard
-- `http://localhost:5500/employees.html` - employee CRUD
-- `http://localhost:5500/departments.html` - department page
+### 7. Monitoring & Logging
+- Set up log aggregation (ELK, Splunk, etc.)
+- Configure error tracking (Sentry, etc.)
+- Monitor health check endpoint: `GET /api/health`
+- Set up uptime monitoring
+- Configure database connection pool monitoring
 
-## Important Backend Files
+### 8. Backup Strategy
+- Automated daily database backups
+- Backup retention policy (e.g., 30 days)
+- Test backup restoration process
+- Document backup/restore procedures
 
-- Controller: receives HTTP requests and returns JSON APIs.
-- Service: contains business logic and validation.
-- Repository: talks to MySQL using Spring Data JPA.
-- Entity: maps Java classes to database tables.
-- DTO: request/response objects used by the frontend.
-- `DataSeeder`: inserts default demo data at startup.
-- `AuthFilter`: protects `/api/**` routes except `/api/auth/**`.
+## Troubleshooting
 
-## API Quick Test
+### Common Issues
 
-Login:
+**Backend won't start:**
+- Check if port 8080 is already in use
+- Verify MySQL connection string and credentials
+- Check application logs for specific error messages
+- Ensure Java 17+ is installed
 
-```powershell
-curl -i -c cookies.txt -H "Content-Type: application/json" -d "{\"username\":\"admin\",\"password\":\"admin123\"}" http://localhost:8080/api/auth/login
-```
+**Login not working:**
+- Verify admin credentials in database
+- Check if session timeout is configured correctly
+- Ensure CORS origins include your frontend domain
+- Check browser console for JavaScript errors
 
-Get employees:
+**Database connection errors:**
+- Verify MySQL is running and accessible
+- Check firewall rules for database port (3306)
+- Ensure database user has proper permissions
+- Test connection string with MySQL client
 
-```powershell
-curl -b cookies.txt http://localhost:8080/api/employees
-```
+**Frontend API calls failing:**
+- Check `API_BASE` in `frontend/app.js` matches backend URL
+- Verify CORS configuration allows your frontend domain
+- Check browser network tab for request/response details
+- Ensure backend is running and accessible
 
-New HRMS module APIs (created):
+## Support & Contributing
 
-- Salaries: `GET /api/salaries`, `GET /api/salaries/{id}`, `POST /api/salaries` (body: employeeId, amount, period, status), `PUT /api/salaries/{id}`, `DELETE /api/salaries/{id}`
-- Leaves: `GET /api/leaves`, `GET /api/leaves/{id}`, `POST /api/leaves` (body: employeeId, startDate, endDate, reason), `PUT /api/leaves/{id}/status` (body: status), `DELETE /api/leaves/{id}`
-- Attendances: `GET /api/attendances`, `GET /api/attendances/{id}`, `POST /api/attendances` (body: employeeId, date, status, note), `PUT /api/attendances/{id}`, `DELETE /api/attendances/{id}`
-- Issue Notices: `GET /api/notices`, `GET /api/notices/{id}`, `POST /api/notices`, `PUT /api/notices/{id}`, `DELETE /api/notices/{id}`
-- Requests: `GET /api/requests`, `GET /api/requests/{id}`, `POST /api/requests` (body: employeeId, title, description), `PUT /api/requests/{id}/status` (body: status), `DELETE /api/requests/{id}`
+For issues, questions, or contributions:
+- Open an issue on GitHub
+- Check existing documentation
+- Review security best practices before deploying
 
-Frontend pages added:
+## License
 
-- `frontend/salaries.html` and `frontend/salaries.js`
-- `frontend/notices.html` and `frontend/notices.js`
-- `frontend/leaves.html` and `frontend/leaves.js`
-- `frontend/attendances.html` and `frontend/attendances.js`
-- `frontend/requests.html` and `frontend/requests.js`
-
-Routing / Sidebar:
-
-- Sidebar links in `frontend/dashboard.html` and other pages link to the new pages.
-- Active sidebar state is handled in `frontend/app.js` by comparing the current path to link hrefs.
-
-
-Create department:
-
-```powershell
-curl -b cookies.txt -H "Content-Type: application/json" -d "{\"name\":\"Project K\"}" http://localhost:8080/api/departments
-```
-
-## Common Error Fixes
-
-`Access denied for user 'root'@'localhost'`:
-
-```powershell
-$env:MYSQL_PASSWORD="your_actual_mysql_password"
-.\gradlew.bat bootRun
-```
-
-`java command could not be found`:
-
-- Install JDK 17 or JDK 21.
-- Restart VS Code.
-- Run `java -version`.
-
-Port `8080` already in use:
-
-```properties
-server.port=8081
-```
-
-Frontend cannot login:
-
-- Backend must be running on `http://localhost:8080`.
-- Frontend must be served from `http://localhost:5500`.
-- Check `app.cors.allowed-origins` in `application.properties`.
-
-Gradle download blocked:
-
-- Run VS Code terminal as normal user with internet enabled.
-- Run `.\gradlew.bat clean build` once so dependencies are cached.
-
-## Deployment Notes
-
-Backend:
-
-1. Build with `.\gradlew.bat clean bootJar`.
-2. Deploy `backend/build/libs/employee-management-system-1.0.0.jar`.
-3. Set production environment variables:
-   - `MYSQL_USER`
-   - `MYSQL_PASSWORD`
-   - `MYSQL_URL`
-4. Set CORS to your deployed frontend domain.
-
-Frontend:
-
-1. Deploy the `frontend/` folder to Netlify, Vercel, or any static hosting.
-2. Update `frontend/app.js` `API_BASE` to the deployed backend URL.
-
-For production, change `spring.jpa.hibernate.ddl-auto` from `update` to `validate` after the schema is stable.
-
-## Interview Explanation
-
-This project follows a simple layered Spring Boot architecture. Controllers expose REST APIs, services contain business logic, repositories handle MySQL operations through Spring Data JPA, and entities map Java classes to database tables. The frontend is a plain HTML/CSS/JavaScript HRMS admin panel with login, dashboard widgets, employee CRUD, department management, responsive layout, validation messages, loaders, toasts, and confirmation modals.
-
-## Resume-Ready Description
-
-Employee Management System - Built a full stack HRMS web application using Spring Boot, Gradle, MySQL, HTML, CSS, and JavaScript. Implemented session-based HR admin login, employee CRUD, department management, dashboard analytics, REST APIs, JPA repositories, sample data seeding, responsive enterprise UI, and deployment-ready configuration.
-
-## GitHub Upload
-
-```powershell
-cd "C:\Users\KIIT0001\Desktop\Employee-Management System"
-git init
-git add .
-git commit -m "Build HRMS employee management system"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/employee-management-system.git
-git push -u origin main
-```
->>>>>>> 748d43d (feat(hrms): add HRMS modules and frontend (local repo))
+This project is for educational purposes. Please ensure compliance with your organization's security and data handling policies before using in production.

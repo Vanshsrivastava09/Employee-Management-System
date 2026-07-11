@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EMS - HR Login</title>
+  <title>EMS HR - Admin Login</title>
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
@@ -13,18 +13,17 @@
         <div class="auth-visual">
           <div class="landing-welcome">
             <div class="auth-graphic"></div>
-            <h2>Welcome</h2>
-            <p class="welcome-copy">Welcome to Employee Management System, please select your role to proceed further.</p>
+            <h2>Welcome Back</h2>
+            <p class="welcome-copy">Sign in to access the EMS HR admin dashboard and manage your workforce.</p>
             <div class="role-actions">
-              <a class="btn btn--soft" href="employee-login.html">Employee</a>
-              <a class="btn btn--primary" href="index.html">HR Admin</a>
+              <a class="btn btn--soft" href="landing.html">Back to Home</a>
             </div>
           </div>
         </div>
 
         <div class="auth-panel">
-          <h1>Sign in to your account</h1>
-          <p>Use HR admin credentials to manage employees, departments, requests, and notices.</p>
+          <h1>Admin Sign In</h1>
+          <p>Use your HR admin credentials to manage employees, departments, requests, and notices.</p>
 
           <form id="loginForm" class="form" novalidate>
             <div>
@@ -45,6 +44,10 @@
               <span class="btn-text">Sign in</span>
               <span class="spinner hidden" aria-hidden="true"></span>
             </button>
+
+            <div class="auth-switch">
+              <a href="forgot-password.html" style="color:var(--primary);">Forgot password?</a>
+            </div>
 
             <div class="auth-switch">
               <span>Demo admin: <strong>admin</strong> / <strong>admin123</strong></span>

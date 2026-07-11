@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 
 /**
  * Admin user used for simple session-based authentication.
@@ -31,6 +32,15 @@ public class AdminUser {
     @Column(name = "password_hash", nullable = false, length = 200)
     private String passwordHash;
 
+    @Column(name = "email", nullable = false, length = 180, unique = true)
+    private String email;
+
+    @Column(name = "reset_token", length = 255)
+    private String resetToken;
+
+    @Column(name = "reset_token_expiry")
+    private LocalDateTime resetTokenExpiry;
+
     public AdminUser() {
     }
 
@@ -46,6 +56,18 @@ public class AdminUser {
         return passwordHash;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public LocalDateTime getResetTokenExpiry() {
+        return resetTokenExpiry;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -56,5 +78,17 @@ public class AdminUser {
 
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+
+    public void setResetTokenExpiry(LocalDateTime resetTokenExpiry) {
+        this.resetTokenExpiry = resetTokenExpiry;
     }
 }

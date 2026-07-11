@@ -26,16 +26,36 @@ const SalariesUI = (function () {
       const items = res.data && res.data.items ? res.data.items : [];
       const filter = document.getElementById('employeeFilter').value;
       const body = document.getElementById('salariesTableBody');
-      const rows = items.filter(it => !filter || String(it.employee.id) === filter).map(it => `
-        <tr>
-          <td>${App.escapeHtml(it.employee.fullName || it.employee.email)}</td>
-          <td>${it.amount}</td>
-          <td>${App.escapeHtml(it.period || '')}</td>
-          <td>${App.escapeHtml(it.status || '')}</td>
-          <td style="text-align:right;"><button data-id="${it.id}" class="btn btn--soft btn-edit">Edit</button> <button data-id="${it.id}" class="btn btn--danger btn-delete">Delete</button></td>
-        </tr>
-      `).join('') || '<tr><td colspan="5">No salaries found.</td></tr>';
-      body.innerHTML = rows;
+      
+      const filteredItems = items.filter(it => !filter || String(it.employee.id) === filter);
+      
+      if (filteredItems.length === 0) {
+        body.innerHTML = `
+          <tr>
+            <td colspan="5">
+              <div class="empty-state">
+                <div class="empty-state-icon">💰</div>
+                <div class="empty-state-title">No salary records found</div>
+                <div class="empty-state-description">
+                  ${filter ? 'Try selecting a different employee.' : 'Get started by adding salary records for your employees.'}
+                </div>
+                ${!filter ? '<div class="empty-state-action"><button class="btn btn--primary" onclick="document.getElementById(\'createSalaryBtn\').click()">Add Salary</button></div>' : ''}
+              </div>
+            </td>
+          </tr>
+        `;
+      } else {
+        const rows = filteredItems.map(it => `
+          <tr>
+            <td>${App.escapeHtml(it.employee.fullName || it.employee.email)}</td>
+            <td>${it.amount}</td>
+            <td>${App.escapeHtml(it.period || '')}</td>
+            <td><span class="pill ${it.status === 'PAID' ? 'pill--active' : 'pill--warning'}">${App.escapeHtml(it.status || '')}</span></td>
+            <td style="text-align:right;"><button data-id="${it.id}" class="btn btn--soft btn-edit">Edit</button> <button data-id="${it.id}" class="btn btn--danger btn-delete">Delete</button></td>
+          </tr>
+        `).join('');
+        body.innerHTML = rows;
+      }
 
       document.querySelectorAll('.btn-delete').forEach(b => b.addEventListener('click', async (ev)=>{
         const id = ev.currentTarget.getAttribute('data-id');
@@ -74,9 +94,37 @@ const SalariesUI = (function () {
     const amount = document.getElementById('salaryAmount').value;
     const period = document.getElementById('salaryPeriod').value;
     const status = document.getElementById('salaryStatus').value;
+    
+    // Enhanced validation
+    let hasError = false;
+    
+    if (!employeeId) {
+      document.getElementById('salaryEmployeeId').style.borderColor = 'var(--danger)';
+      hasError = true;
+    } else {
+      document.getElementById('salaryEmployeeId').style.borderColor = 'var(--border)';
+    }
+    
+    if (!amount || isNaN(amount) || Number(amount) <= 0) {
+      document.getElementById('salaryAmount').style.borderColor = 'var(--danger)';
+      hasError = true;
+    } else {
+      document.getElementById('salaryAmount').style.borderColor = 'var(--border)';
+    }
+    
+    if (!period) {
+      document.getElementById('salaryPeriod').style.borderColor = 'var(--danger)';
+      hasError = true;
+    } else {
+      document.getElementById('salaryPeriod').style.borderColor = 'var(--border)';
+    }
+    
+    if (hasError) {
+      App.showToast('Please fix the highlighted fields', 'error');
+      return;
+    }
+    
     try {
-      if (!employeeId) return App.showToast('Select employee', 'error');
-      if (!amount) return App.showToast('Enter amount', 'error');
       const payload = { employeeId: Number(employeeId), amount: Number(amount), period, status };
       if (id) {
         await Api.put('/api/salaries/' + id, payload);

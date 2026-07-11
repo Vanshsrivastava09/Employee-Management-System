@@ -1,0 +1,53 @@
+# Java
+/build/
+/.gradle/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Uploads
+uploads/
+
+# Database
+*.db
+*.h2.db
+
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Java compiled files
+*.class
+*.jar
+
+# Environment
+.env
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+echo ".env" >> .gitignore
+echo "*.log" >> .gitignore
+echo "uploads/" >> .gitignore
+echo "backend/build/" >> .gitignore
+echo ".gradle/" >> .gitignore
+git add .gitignore
+git commit -m "Add .gitignore"*
